@@ -28,6 +28,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  overflow: hidden;
 }
 
 h1 {
@@ -59,9 +60,8 @@ button:focus-visible {
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  margin: 0;
+  padding: 0;
   text-align: center;
 }
 
@@ -76,4 +76,65 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+.el-form-item {
+    display: flex;
+    --font-size: 14px;
+    margin-bottom: 18px;
+    margin-top: 20px;
+}
+
+.el-form-item--label-top .el-form-item__label {
+  display: block;
+  height: auto;
+  line-height: 22px;
+  margin-bottom: 8px;
+  text-align: left;
+  font-weight: 500;
+  letter-spacing: 2px;
+  font-size: 14px;
+}
+
+.el-upload-list__item {
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: var(--el-text-color-regular);
+    font-size: 14px;
+    margin-bottom: 5px;
+    position: relative;
+    transition: all .5s cubic-bezier(.55,0,.1,1);
+    width: 100%;
+    height: 100px;
+    background: #fff;
+    border-radius: 10px;
+    margin-top: 30px;
+}
+
+.el-upload-list__item-status-label {
+    left: 80px;
+    display: none;
+    position: absolute;
+    right: 5px;
+    top: 60px;
+    transition: opacity var(--el-transition-duration);
+}
+.el-upload-list__item-name .el-icon {
+    color: var(--el-text-color-secondary);
+    margin-right: 6px;
+    width: 24px;
+    height: 24px;
+}
+.el-upload-list__item .el-icon--upload-success {
+    color: var(--el-color-success);
+    width: 20px;
+    height: 20px;
+}
+.el-upload-list__item-file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: start;
+    padding-left: 20px;
+    padding-top: 50px;
 }
