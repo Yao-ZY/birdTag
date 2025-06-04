@@ -14,7 +14,11 @@
     "element-plus": "^2.9.11",
     "process": "^0.11.10",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "@aws-sdk/client-cognito-identity": "^3.823.0",
+    "@aws-sdk/client-s3": "^3.823.0",
+    "@aws-sdk/credential-provider-cognito-identity": "^3.823.0",
+    "amazon-cognito-identity-js": "^6.3.15"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",

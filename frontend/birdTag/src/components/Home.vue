@@ -72,7 +72,6 @@ onMounted(() => {
         router.push('/')
         return
       }
-      console.log("currentUser", currentUser)
       cognitoUser.value = currentUser;
     });
   } else {
