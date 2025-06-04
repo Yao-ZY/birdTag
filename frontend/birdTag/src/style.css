@@ -138,3 +138,15 @@ button:focus-visible {
     padding-left: 20px;
     padding-top: 50px;
 }
+
+.el-message--error{
+    color: var(--el-message-text-color);
+    overflow-wrap: break-word;
+    height: 50px;
+}
+.el-message--success {
+    color: var(--el-message-text-color);
+    overflow-wrap: break-word;
+    height: 45px;
+}
+

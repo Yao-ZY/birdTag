@@ -8,7 +8,7 @@
             </div>
             <div class = "person">
                 <span class ="theme_title">
-                    <router-link to="/" class="link-text">Log out</router-link>Yao
+                    {{ email }}
                 </span>
             </div>
         </el-header>
@@ -30,7 +30,9 @@
             </el-aside>
             <el-main>
                 <MainPage v-if="isSelected === 1" />
-                <PersonPage v-if="isSelected === 3" />
+                <PersonPage v-if="isSelected === 3" 
+                :cognito-user="cognitoUser" 
+                :email="email"  />
                 <UploadPage v-if="isSelected === 2" />
                 <div class="bottom_over"> Welcome to the BridTag web application </div>
             </el-main>
@@ -39,19 +41,45 @@
     </div>
 </template>
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import MainPage from '../components/homepages/MainPage.vue';
 import PersonPage from '../components/homepages/PersonPage.vue';
 import UploadPage from '../components/homepages/UploadPage.vue';
+import { userPool } from '../cognito'
 
-const isSidebarCollapsed = ref(false)
+const route = useRoute()
+const router = useRouter()
+
+const isSidebarCollapsed = ref(true)
 const isSelected = ref(1)
-const sidebarWidth = ref('200px')
+const sidebarWidth = ref('86px')
 const sidebarItems = reactive([
   { id: 1, icon: '/src/assets/home.png', label: 'Home'},
   { id: 2, icon: '/src/assets/cloudupload.png', label: 'Upload'},
   { id: 3, icon: '/src/assets/person.png', label: 'Profile'}
 ])
+const email = ref("")
+const cognitoUser = ref(null) 
+
+onMounted(() => {
+  email.value = route.query.email || ''
+  const currentUser = userPool.getCurrentUser();
+  if (currentUser) {
+    currentUser.getSession((err, session) => {
+      if (err || !session.isValid()) {
+        alert("Invalid session, redirect to login")
+        router.push('/')
+        return
+      }
+      console.log("currentUser", currentUser)
+      cognitoUser.value = currentUser;
+    });
+  } else {
+    alert("No current user, jump to login")
+    router.push('/')
+  }
+})
 
 
 const toggleSidebar = () => {
@@ -61,6 +89,7 @@ const toggleSidebar = () => {
 const handleItemClick = (itemId) => {
   isSelected.value = itemId
 }
+
 </script>
 <style lang="less" scoped>
 .home {

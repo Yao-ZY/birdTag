@@ -90,7 +90,7 @@ const handleLogin = () => {
       onSuccess: (result) => {
         const idToken = result.getIdToken().getJwtToken();
         resolve({ user, idToken });
-        router.push('/home')
+        router.push({ name: 'Home', query: { email: form.value.username } })
       },
       onFailure: (err) => reject(err),
     });
