@@ -5,7 +5,7 @@ import Home from '../components/Home.vue'
 import MainPage from '../components/homepages/MainPage.vue'
 import PersonPage from '../components/homepages/PersonPage.vue'
 import UploadPage from '../components/homepages/UploadPage.vue'
-
+import ConfirmSignup from '../components/ConfirmSignup.vue'
 const routes = [
   {
     path: '/',
@@ -16,6 +16,11 @@ const routes = [
     path: '/signup',
     name: 'Signup',
     component: Signup
+  },
+  {
+    path: '/confirmsignup',
+    name: 'ConfirmSignup',
+    component: ConfirmSignup
   },
   {
     path: '/home',
