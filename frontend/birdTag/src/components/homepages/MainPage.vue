@@ -102,13 +102,9 @@ const handleDelete = async () => {
     const requestbody = {
       "url": selectedFileIds.value
     }
-    const response = await axios.post('/bird/query/delete_files', requestbody);
-    if (response.status === 200) {
-      filteredData.value = response.data;
-      ElMessage.success('Delete Successful');
-    } else {
-      ElMessage.error('Delete Fail Please again');
-    }
+    await axios.post('/bird/query/delete_files', requestbody);
+    getTableData()
+    ElMessage.success('Delete Successful');
   } catch (error) {
     ElMessage.error('Delete Fail Please again');
   }
@@ -145,7 +141,6 @@ onMounted(getTableData)
   height: 100%;
   width: 90%;
   margin-left: 5%;
-  overflow: hidden;
 
   .search {
     width: 100%;
