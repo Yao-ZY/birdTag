@@ -15,7 +15,7 @@
             </div>
             <template #tip>
             <div class="el-upload__tip">
-                upload jpg/png/audio/video files
+              upload jpg/png/audio/video files
             </div>
             </template>
         </el-upload>
@@ -28,7 +28,6 @@ import { ElMessage } from 'element-plus';
 import axios from 'axios';
 
 const uploadedFiles = reactive([]);
-const bucketName = 'group7-birdtag-media-bucket'
 
 const handleChange = async (uploadFile, uploadFiles) => {
   const rawFile = uploadFile.raw;
