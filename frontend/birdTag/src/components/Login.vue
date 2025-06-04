@@ -89,6 +89,7 @@ const handleLogin = () => {
     user.authenticateUser(authDetails, {
       onSuccess: (result) => {
         const idToken = result.getIdToken().getJwtToken();
+        localStorage.setItem('idToken', idToken);
         resolve({ user, idToken });
         router.push({ name: 'Home', query: { email: form.value.username } })
       },
