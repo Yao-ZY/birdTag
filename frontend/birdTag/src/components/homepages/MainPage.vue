@@ -58,7 +58,9 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue'
 import { ElMessage } from 'element-plus';
+import { urlToBase64 } from "../../urlToBase64.js";
 import axios from 'axios';
+
 const tableData = ref([])
 const urlData = ref([])
 const input = ref('')
@@ -93,8 +95,7 @@ const handleTags = async (type) => {
   }
   try {
     console.log(data)
-    const response = await axios.post('/bird/query/delete_add_by_tags ', data);
-    console.log(response)
+    await axios.post('/bird/query/delete_add_by_tags ', data);
     getTableData()
     ElMessage.success('Edit Tags Successful');
   } catch (error) {
@@ -105,7 +106,6 @@ const handleTags = async (type) => {
 
 const handleSearch = async () => {
   try {
-    console.log(trigger.value)
     const queryType = trigger.value;
     if (queryType == "Tags") {
       const response = await axios.post('/bird/query/found_by_tag', input.value, {
@@ -120,10 +120,26 @@ const handleSearch = async () => {
          Authorization: localStorage.getItem('idToken'), 
       }});
       urlData.value = response.data.links;
-      console.log(urlData.value)
+      ElMessage.success('Search Successful');
+    } else {
+      const base64 = await urlToBase64(input.value);
+      const base64WithoutPrefix = base64.startsWith('data:') 
+          ? base64.split(',')[1] 
+          : base64;
+      const response = await axios.post(`/bird/query/found_by_file_uploaded/media_upload`, {
+        "file_type": '.png',
+        "file_bytes": base64WithoutPrefix
+      });
+      const tagsBody = {
+        "tags": response.data
+      }
+      const response2 = await axios.post('/bird/query/found_by_tag', tagsBody, {
+      headers: {
+         Authorization: localStorage.getItem('idToken'), 
+      }});
+      urlData.value = response2.data.links;
       ElMessage.success('Search Successful');
     }
-    
   } catch (error) {
     ElMessage.error('Search Fail Please again');
   }
