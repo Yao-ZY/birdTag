@@ -6,8 +6,8 @@
         v-model="input" 
         style="width: 340px; height: 50px; margin-bottom: 40px" placeholder="Please input" />
       <button @click="handleSearch" style="width: 100px; height: 50px"> Search </button>
-      <button @click="handleSearch" style="width: 100px; height: 50px"> AddTags </button>
-      <button @click="handleSearch" style="width: 100px; height: 50px"> DelTags </button>
+      <button @click="handleTags(1)" style="width: 100px; height: 50px"> AddTags </button>
+      <button @click="handleTags(0)" style="width: 100px; height: 50px"> DelTags </button>
       <button @click="handleDelete" style="width: 150px; height: 50px; background-color: #9EB0EA; color: #fff"> Delete Files</button>
     </div>
     <div class="cards" v-show="urlData.length">
@@ -65,7 +65,7 @@ const input = ref('')
 const selectedFileIds = ref([])
 const trigger = ref('Species')
 const options = ['Species', 'Tags', 'File_Url']
-
+const idToken = localStorage.getItem('idToken')
 const handleSelectionChange = (val) => {
   selectedFileIds.value = val.map(item => item.file_id);
 }
@@ -73,6 +73,35 @@ const handleSelectionChange = (val) => {
 const isImage = (url) => {
   return url.toLowerCase().endsWith('.png') || url.toLowerCase().endsWith('.jpg');
 };
+
+const handleTags = async (type) => {
+  if (selectedFileIds.value.length == 0) {
+    ElMessage.error('You need to select files that want to edit tages');
+    return 
+  }
+  let tag = []
+  try {
+    // Pigeon,657;Crow,723
+    tag = input.value.split(';')
+  } catch (error) {
+    ElMessage.error('Tags Format Error!');
+  }
+  const data = {
+    url: selectedFileIds.value,
+    operation: type,
+    tags: tag
+  }
+  try {
+    console.log(data)
+    const response = await axios.post('/bird/query/delete_add_by_tags ', data);
+    console.log(response)
+    getTableData()
+    ElMessage.success('Edit Tags Successful');
+  } catch (error) {
+    ElMessage.error('Edit Tags Fail Please again');
+  }
+
+}
 
 const handleSearch = async () => {
   try {
@@ -105,7 +134,12 @@ const handleDelete = async () => {
     const requestbody = {
       "url": selectedFileIds.value
     }
-    await axios.post('/bird/query/delete_files', requestbody);
+    await axios.post('/bird/query/delete_files', requestbody, {
+      headers: {
+        'Content-Type': 'application/json',
+         Authorization: idToken, 
+      }
+    });
     getTableData()
     ElMessage.success('Delete Successful');
   } catch (error) {

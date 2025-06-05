@@ -90,7 +90,6 @@ const handleLogin = () => {
       onSuccess: (result) => {
         const idToken = result.getIdToken().getJwtToken();
         localStorage.setItem('idToken', idToken);
-        console.log(idToken)
         resolve({ user, idToken });
         router.push({ name: 'Home', query: { email: form.value.username } })
       },
