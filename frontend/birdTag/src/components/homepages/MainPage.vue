@@ -6,7 +6,9 @@
         v-model="input" 
         style="width: 340px; height: 50px; margin-bottom: 40px" placeholder="Please input" />
       <button @click="handleSearch" style="width: 100px; height: 50px"> Search </button>
-      <button @click="handleDelete" style="width: 200px; height: 50px; background-color: #9EB0EA; color: #fff"> Delete Files</button>
+      <button @click="handleTags(1)" style="width: 100px; height: 50px"> AddTags </button>
+      <button @click="handleTags(0)" style="width: 100px; height: 50px"> DelTags </button>
+      <button @click="handleDelete" style="width: 150px; height: 50px; background-color: #9EB0EA; color: #fff"> Delete Files</button>
     </div>
     <div class="cards" v-show="urlData.length">
       <el-card class="box-card" v-for="url in urlData">
@@ -35,7 +37,8 @@
           <template #default="{ row }">
             <img 
               v-if="row.file_type == 'image'" 
-              style="width: 200px; height: 100px"
+              width ="200px" 
+              style="height: 150px;"
               :src="row.file_id" 
               alt="Preview" 
               class="image-preview"
@@ -55,14 +58,16 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue'
 import { ElMessage } from 'element-plus';
+import { urlToBase64 } from "../../urlToBase64.js";
 import axios from 'axios';
+
 const tableData = ref([])
 const urlData = ref([])
 const input = ref('')
 const selectedFileIds = ref([])
 const trigger = ref('Species')
 const options = ['Species', 'Tags', 'File_Url']
-
+const idToken = localStorage.getItem('idToken')
 const handleSelectionChange = (val) => {
   selectedFileIds.value = val.map(item => item.file_id);
 }
@@ -71,9 +76,36 @@ const isImage = (url) => {
   return url.toLowerCase().endsWith('.png') || url.toLowerCase().endsWith('.jpg');
 };
 
+const handleTags = async (type) => {
+  if (selectedFileIds.value.length == 0) {
+    ElMessage.error('You need to select files that want to edit tages');
+    return 
+  }
+  let tag = []
+  try {
+    // Pigeon,657;Crow,723
+    tag = input.value.split(';')
+  } catch (error) {
+    ElMessage.error('Tags Format Error!');
+  }
+  const data = {
+    url: selectedFileIds.value,
+    operation: type,
+    tags: tag
+  }
+  try {
+    console.log(data)
+    await axios.post('/bird/query/delete_add_by_tags ', data);
+    getTableData()
+    ElMessage.success('Edit Tags Successful');
+  } catch (error) {
+    ElMessage.error('Edit Tags Fail Please again');
+  }
+
+}
+
 const handleSearch = async () => {
   try {
-    console.log(trigger.value)
     const queryType = trigger.value;
     if (queryType == "Tags") {
       const response = await axios.post('/bird/query/found_by_tag', input.value, {
@@ -88,10 +120,26 @@ const handleSearch = async () => {
          Authorization: localStorage.getItem('idToken'), 
       }});
       urlData.value = response.data.links;
-      console.log(urlData.value)
+      ElMessage.success('Search Successful');
+    } else {
+      const base64 = await urlToBase64(input.value);
+      const base64WithoutPrefix = base64.startsWith('data:') 
+          ? base64.split(',')[1] 
+          : base64;
+      const response = await axios.post(`/bird/query/found_by_file_uploaded/media_upload`, {
+        "file_type": '.png',
+        "file_bytes": base64WithoutPrefix
+      });
+      const tagsBody = {
+        "tags": response.data
+      }
+      const response2 = await axios.post('/bird/query/found_by_tag', tagsBody, {
+      headers: {
+         Authorization: localStorage.getItem('idToken'), 
+      }});
+      urlData.value = response2.data.links;
       ElMessage.success('Search Successful');
     }
-    
   } catch (error) {
     ElMessage.error('Search Fail Please again');
   }
@@ -102,7 +150,12 @@ const handleDelete = async () => {
     const requestbody = {
       "url": selectedFileIds.value
     }
-    await axios.post('/bird/query/delete_files', requestbody);
+    await axios.post('/bird/query/delete_files', requestbody, {
+      headers: {
+        'Content-Type': 'application/json',
+         Authorization: idToken, 
+      }
+    });
     getTableData()
     ElMessage.success('Delete Successful');
   } catch (error) {
@@ -164,6 +217,7 @@ onMounted(getTableData)
     width: 100%;
     height: 600px;
     overflow-y: scroll;
+    margin-bottom: 50px;
   }
 
 }
