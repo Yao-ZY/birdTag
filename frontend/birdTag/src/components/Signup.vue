@@ -30,7 +30,7 @@
             style="height: 50px; margin-top: 60px"
             label="Email">
             <el-input 
-              v-model= form.username
+              v-model= form.email
               placeholder="Please Input Email"
             />
           </el-form-item>
@@ -63,6 +63,7 @@
               padding-left: 220px;
               font-size: 18px;
               height: 50px"
+            @click="handleLogin"
           >Save</el-button>
         </el-form>
         <p class="goback"> Go back!! <router-link to="/" class="link-text">Log in</router-link></p>
@@ -70,18 +71,49 @@
 </template>
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import {
+  CognitoUserPool,
+  CognitoUserAttribute
+} from 'amazon-cognito-identity-js';
 
+const poolData = {
+  UserPoolId: 'us-east-1_nyFLr2L5V',
+  ClientId: '4atsi0gdvl985s56h3kcg702nv',
+};
+const userPool = new CognitoUserPool(poolData);
+const router = useRouter()
 const form = ref({
   first_name: '',
   last_name: '',
-  username: '',
+  email: '',
   password: '',
   con_password: '',
 })
 
 const handleLogin = () => {
-  console.log('data:', form.value)
-  // TODO
+  return new Promise((resolve, reject) => {
+    const attributeList = [
+      new CognitoUserAttribute({ Name: 'email', Value: form.value.email }),
+      new CognitoUserAttribute({ Name: 'given_name', Value: form.value.first_name }),
+      new CognitoUserAttribute({ Name: 'family_name', Value: form.value.last_name }),
+    ]
+    userPool.signUp(
+      form.value.email, 
+      form.value.password,
+      attributeList,
+      null,
+      (err, result) => {
+        if (err) {
+          console.error('Signup error:', err)
+          return reject(err)
+        }
+        console.log('Signup success:', result)
+        resolve(result.user)
+        router.push({ name: 'ConfirmSignup', query: { email: form.value.email } })
+      }
+    )
+  });
 }
 </script>
 <style lang="less" scoped>

@@ -63,17 +63,39 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import {
+  CognitoUserPool,
+  CognitoUser,
+  AuthenticationDetails,
+} from 'amazon-cognito-identity-js';
+
+const poolData = {
+  UserPoolId: 'us-east-1_nyFLr2L5V',
+  ClientId: '4atsi0gdvl985s56h3kcg702nv',
+};
+const userPool = new CognitoUserPool(poolData);
 
 const router = useRouter()
 const form = ref({
   username: '',
   password: '',
-  isRemember: '',
 })
 
 const handleLogin = () => {
-  console.log('data:', form.value)
-  router.push('/home')
+  return new Promise((resolve, reject) => {
+    const authDetails = new AuthenticationDetails({ Username: form.value.username, Password: form.value.password });
+    const user = new CognitoUser({ Username: form.value.username, Pool: userPool });
+
+    user.authenticateUser(authDetails, {
+      onSuccess: (result) => {
+        const idToken = result.getIdToken().getJwtToken();
+        localStorage.setItem('idToken', idToken);
+        resolve({ user, idToken });
+        router.push({ name: 'Home', query: { email: form.value.username } })
+      },
+      onFailure: (err) => reject(err),
+    });
+  });
 }
 </script>
 <style lang="less" scoped>
