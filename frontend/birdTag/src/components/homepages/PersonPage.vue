@@ -1,6 +1,5 @@
 <template>
     <div class="person">
-        <p class = "title">Person Profile</p>
         <el-form
           :model="form"
           label-position="top"
@@ -51,12 +50,13 @@
                 placeholder="Please Input Password"
               />
           </el-form-item>
+          <el-checkbox v-model="isSubscribe">Subscribe</el-checkbox>
           <el-button 
             style="
               color: #ffffff; 
               background-color: #8699DA; 
               border-radius: 80px;
-              margin-top: 50px;
+              margin-top: 10px;
               text-align: center;
               font-weight: 800;
               padding-left: 220px;
@@ -120,6 +120,7 @@ const form = ref({
   password: '',
   con_password: '',
 })
+const isSubscribe = ref(false)
 
 const handleSave = () => {
   if (form.value.password) {
@@ -166,22 +167,9 @@ const handleLogout = () => {
         width: 24px;
         height: 24px;
         }
-
-    .title {
-        font-weight: 700;
-        font-size: 20px;
-        height: 2%;
-        text-align: left;
-        letter-spacing: 3px;
-
-        .link-text {
-          color: #9EB0EA
-        }
-    }
-
+      
     .login-form {
         width: 500px;
-        margin-top: 30px;
         margin-left: 25%;
     }
 }
@@ -202,5 +190,25 @@ const handleLogout = () => {
   .el-message-box__btns {
     justify-content: flex-end;
   }
+}
+
+:deep(.el-checkbox__label) {
+    display: inline-block;
+    font-size: var(--el-checkbox-font-size);
+    line-height: 1;
+    padding-left: 8px;
+    text-align: start;
+}
+:deep(.el-checkbox__input) {
+    cursor: pointer;
+    display: inline-flex;
+    outline: none;
+    position: relative;
+    white-space: nowrap;
+    width: 20px;
+}
+:deep(.el-checkbox:last-of-type) {
+    margin-right: 0;
+    margin-top: 40px;
 }
 </style>

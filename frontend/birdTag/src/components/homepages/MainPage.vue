@@ -6,7 +6,9 @@
         v-model="input" 
         style="width: 340px; height: 50px; margin-bottom: 40px" placeholder="Please input" />
       <button @click="handleSearch" style="width: 100px; height: 50px"> Search </button>
-      <button @click="handleDelete" style="width: 200px; height: 50px; background-color: #9EB0EA; color: #fff"> Delete Files</button>
+      <button @click="handleSearch" style="width: 100px; height: 50px"> AddTags </button>
+      <button @click="handleSearch" style="width: 100px; height: 50px"> DelTags </button>
+      <button @click="handleDelete" style="width: 150px; height: 50px; background-color: #9EB0EA; color: #fff"> Delete Files</button>
     </div>
     <div class="cards" v-show="urlData.length">
       <el-card class="box-card" v-for="url in urlData">
@@ -35,7 +37,8 @@
           <template #default="{ row }">
             <img 
               v-if="row.file_type == 'image'" 
-              style="width: 200px; height: 100px"
+              width ="200px" 
+              style="height: 150px;"
               :src="row.file_id" 
               alt="Preview" 
               class="image-preview"
@@ -164,6 +167,7 @@ onMounted(getTableData)
     width: 100%;
     height: 600px;
     overflow-y: scroll;
+    margin-bottom: 50px;
   }
 
 }
