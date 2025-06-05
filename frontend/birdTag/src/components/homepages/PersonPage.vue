@@ -50,13 +50,12 @@
                 placeholder="Please Input Password"
               />
           </el-form-item>
-          <el-checkbox v-model="isSubscribe">Subscribe</el-checkbox>
           <el-button 
             style="
               color: #ffffff; 
               background-color: #8699DA; 
               border-radius: 80px;
-              margin-top: 10px;
+              margin-top: 50px;
               text-align: center;
               font-weight: 800;
               padding-left: 220px;
@@ -114,13 +113,12 @@ onMounted(() => {
 });
 
 const form = ref({
-  your_name: 'Yao Zhang',
+  your_name: '',
   username: props.email,
   oldpassword: '',
   password: '',
   con_password: '',
 })
-const isSubscribe = ref(false)
 
 const handleSave = () => {
   if (form.value.password) {

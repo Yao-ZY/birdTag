@@ -36,7 +36,6 @@ const handleChange = async (uploadFile, uploadFiles) => {
 };
 
 const handleBeforeUpload = async (file) => {
-  console.log(file)
     const idToken = localStorage.getItem('idToken')
     if (!idToken) throw new Error('User not authenticated')
 
