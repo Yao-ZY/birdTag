@@ -4,12 +4,13 @@
       <el-segmented v-model="trigger" :options="options" />
       <el-input 
         v-model="input" 
-        style="width: 340px; height: 50px; margin-bottom: 40px" placeholder="Please input" />
+        style="width: 340px; height: 50px; margin-bottom: 40px" placeholder="Please Input" />
       <button @click="handleSearch" style="width: 100px; height: 50px"> Search </button>
       <button @click="handleTags(1)" style="width: 100px; height: 50px"> AddTags </button>
       <button @click="handleTags(0)" style="width: 100px; height: 50px"> DelTags </button>
       <button @click="handleDelete" style="width: 150px; height: 50px; background-color: #9EB0EA; color: #fff"> Delete Files</button>
     </div>
+    <p style="height: 20px;font-size: 10px;margin-top: -10px;color: #dcdcdc;">If you want to add/delete Tags, please input format: (e.g Pigeon,657;Crow,723)</p>
     <div class="cards" v-show="urlData.length">
       <el-card class="box-card" v-for="url in urlData">
         <template v-if="!isImage(url)">
@@ -82,12 +83,13 @@ const handleTags = async (type) => {
     return 
   }
   let tag = []
-  try {
-    // Pigeon,657;Crow,723
-    tag = input.value.split(';')
-  } catch (error) {
-    ElMessage.error('Tags Format Error!');
+  // Pigeon,657;Crow,723
+  tag = input.value.split(';')
+  
+  if (tag.length === 1 && tag[0].indexOf(',') === -1) {
+    ElMessage.error('Tags Format Error(e.g Pigeon,657;Crow,723)! ');
   }
+  
   const data = {
     url: selectedFileIds.value,
     operation: type,
@@ -122,6 +124,12 @@ const handleSearch = async () => {
       urlData.value = response.data.links;
       ElMessage.success('Search Successful');
     } else {
+      const isImage = input.value.indexOf(".png") !== -1 || input.value.indexOf(".jpg") !== -1
+      console.log(isImage)
+      if (!isImage) {
+        ElMessage.error('Sorry, due to timeout restrictions, video/audio url search is not currently supported');
+        return
+      }
       const base64 = await urlToBase64(input.value);
       const base64WithoutPrefix = base64.startsWith('data:') 
           ? base64.split(',')[1] 
